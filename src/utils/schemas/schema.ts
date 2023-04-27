@@ -13,3 +13,12 @@ export const registerInputSchema = z.object({
     .string({ required_error: "user must provide their mobile number" })
     .min(10),
 });
+
+export const loginInputSchema = z.object({
+  email: z
+    .string({ required_error: "Please provide your email address" })
+    .email({ message: "Please provide a valid email address" }),
+  password: z.string({
+    required_error: "Please provide your password",
+  }),
+});
