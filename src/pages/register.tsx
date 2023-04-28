@@ -7,26 +7,26 @@ import { useRouter } from "next/router";
 
 import { api } from "@/utils/api";
 
-const Home: NextPage = () => {
+const Register: NextPage = () => {
   const context = api.useContext();
   const router = useRouter();
 
   const users = api.auth.getAll.useQuery();
 
-  const { mutate, isLoading } = api.auth.login.useMutation({
+  const { mutate, isLoading } = api.auth.register.useMutation({
     onSuccess(data) {
       context.auth.user.setData(undefined, data);
     },
     // onError(error) {
-      
+
     // },
     async onSettled(data) {
       if (data) {
-        const redirect = (router.query.redirect as string) || '/app';
+        const redirect = (router.query.redirect as string) || "/app";
         await router.replace(redirect);
       }
     },
-  })
+  });
 
   return (
     <>
@@ -38,31 +38,38 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <Formik
           onSubmit={(values, actions) => {
-            const { email, password } = values;
+            const { email, password, firstName, lastName, mobile } = values;
             mutate({
               email,
               password,
+              firstName,
+              lastName,
+              mobile,
             });
 
-            actions.resetForm(); 
+            //actions.resetForm();
           }}
-          initialValues={{ email: "", password: "" }}
+          initialValues={{
+            email: "",
+            password: "",
+            firstName: "",
+            lastName: "",
+            mobile: "",
+          }}
         >
           <Form>
+            <FormInput name="firstName" type="text" label="First Name" />
+            <FormInput name="lastName" type="text" label="Last Name" />
             <FormInput name="email" type="email" label="Email Address" />
+            <FormInput name="mobile" type="text" label="Mobile Number" />
             <FormInput name="password" type="password" label="Password" />
 
-            <Button className="u-w-100">
-              {"Login"}
-            </Button>
+            <Button className="u-w-100">{"Login"}</Button>
           </Form>
         </Formik>
-        <pre>
-          {JSON.stringify(users.data)}
-        </pre>
       </main>
     </>
   );
 };
 
-export default Home;
+export default Register;

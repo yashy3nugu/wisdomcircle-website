@@ -8,7 +8,7 @@ export const authRouter = createTRPCRouter({
     .input(registerInputSchema)
     .mutation(async ({ input, ctx }) => {
       const { email, firstName, lastName, mobile, password } = input;
-      const user = ctx.prisma.user.create({
+      const user = await ctx.prisma.user.create({
         data: {
           firstName,
           lastName,
@@ -17,6 +17,8 @@ export const authRouter = createTRPCRouter({
           mobile,
         },
       });
+
+      jwt.signToken({ user }, ctx.req, ctx.res);
 
       return user;
     }),
