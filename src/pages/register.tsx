@@ -29,6 +29,7 @@ const Register: NextPage = () => {
           <FormInput name="firstName" type="text" placeholder="First Name" />
           <FormInput name="lastName" type="text" placeholder="Last Name" />
           <FormInput name="email" type="email" placeholder="Email Address" />
+          <FormInput name="mobile" type="email" placeholder="Mobile Number" />
           <PasswordInput name="password" placeholder="Password" />
           <p className="mt-6 text-xs">
             By clicking Sign Up you are indicating that you have read and
