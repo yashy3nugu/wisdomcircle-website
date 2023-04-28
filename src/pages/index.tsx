@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 
 import { api } from "@/utils/api";
+import PasswordInput from "@/components/ui/password-input";
 
 const Home: NextPage = () => {
   const context = api.useContext();
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
         >
           <Form>
             <FormInput name="email" type="email" placeholder="Email or Mobile Number" />
-            <FormInput name="password" type="password" placeholder="Password" />
+            <PasswordInput name="password" type="password" placeholder="Password" />
 
             <Button className="u-w-100">
               {"Login"}

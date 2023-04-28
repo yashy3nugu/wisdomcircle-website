@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default: "bg-brand-400 text-black hover:bg-brand-400/90",
         outline:
           "border-2 border-brand-500 text-brand-500 hover:bg-brand-500/10",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        ghost: "",
         link: "underline-offset-4 hover:underline text-primary",
       },
       size: {
