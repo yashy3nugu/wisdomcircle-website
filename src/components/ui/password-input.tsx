@@ -24,13 +24,9 @@ const PasswordInput: React.FC<Props> = ({
 
   return (
     <div>
-      {/* appearance-none block rounded px-4 focus:outline-transparent focus:outline
-      disabled:text-gray-400 disabled:bg-gray-200 disabled:cursor-not-allowed
-      pr-0 text-red-400 placeholder:text-red-400 h-12 text-sm md:text-base
-      font-poppins font-normal box-border w-full bg-transparent */}
       <div
         className={cn(
-          "flex w-full items-center rounded rounded border border-2 border-danger focus:border-danger",
+          "flex w-full items-center rounded border border-danger focus:border-danger",
           //   touched && error
           touched && error ? "border-danger" : "border-divider"
         )}
@@ -38,7 +34,7 @@ const PasswordInput: React.FC<Props> = ({
         <div className="flex w-full flex-col">
           <Field
             className={cn(
-              "box-border block h-10 appearance-none rounded bg-transparent px-3 pr-0 text-sm placeholder:text-muted-foreground focus:outline-none",
+              "box-border block h-12 appearance-none rounded bg-transparent px-3 pr-0 text-sm md:text-base placeholder:text-muted-foreground focus:outline-none",
               touched && error ? "text-danger placeholder:text-danger" : ""
             )}
             type={showPassword ? "text" : "password"}

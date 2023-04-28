@@ -7,7 +7,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
     <>
       <main>
         <div className="flex h-full flex-col items-center justify-center">
-          <div className="grid h-full w-full md:grid-cols-5">
+          <div className="grid h-screen w-full md:grid-cols-5">
             <div className="hidden justify-center md:col-span-2 md:flex">
               <div className="relative flex h-screen flex-col items-center justify-center bg-brandgray text-white">
                 <div className="flex h-full items-center">
@@ -44,7 +44,9 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
               </div>
             </div>
             <div className="col-span-1 flex h-full w-full flex-col md:col-span-3 md:flex-row md:justify-center">
-              {children}
+              <div className="flex h-full w-full flex-col items-start justify-center px-6 sm:px-8 md:max-w-md">
+                {children}
+              </div>
             </div>
           </div>
         </div>
