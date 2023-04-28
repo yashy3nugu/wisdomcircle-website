@@ -21,12 +21,12 @@ const Home: NextPage = () => {
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const { mutateAsync, isLoading , error} = api.auth.login.useMutation({
+  const { mutateAsync } = api.auth.login.useMutation({
     onSuccess(data) {
       context.auth.user.setData(undefined, data);
     },
     // onError(error) {
-      
+
     // },
     async onSettled(data) {
       if (data) {
@@ -50,65 +50,64 @@ const Home: NextPage = () => {
         onSubmit={async (values, actions) => {
           const { emailOrMobile, password } = values;
 
-
-
           try {
             await mutateAsync({
-            emailOrMobile,
-            password,
-          });
-          }
-          catch (err) {
-
-            const error = err as any
-            console.log({...error})
+              emailOrMobile,
+              password,
+            });
+          } catch (err) {
+            const error = err as any;
+            
             if (error.data.code === "NOT_FOUND") {
-              if (emailOrMobile.includes('@')) {
-                  actions.setFieldError(
-                    "emailOrMobile",
-                    "Sorry! This email is not registered"
-                  );
-              }
-              else {
+              if (emailOrMobile.includes("@")) {
+                actions.setFieldError(
+                  "emailOrMobile",
+                  "Sorry! This email is not registered"
+                );
+              } else {
                 actions.setFieldError(
                   "emailOrMobile",
                   "Sorry! This mobile number is not registered"
                 );
               }
-
-            }
-            else if (error.data.code === "UNAUTHORIZED") {
+            } else if (error.data.code === "UNAUTHORIZED") {
               actions.setFieldError(
                 "password",
                 "Sorry! Password entered is incorrect"
               );
             }
-            
-            
           }
-          
-          
+
           // actions.resetForm();
         }}
         initialValues={{ emailOrMobile: "", password: "" }}
       >
-        <Form className="mt-7 w-full">
-          <FormInput
-            name="emailOrMobile"
-            type="text"
-            placeholder="Email or Mobile Number"
-          />
-          <PasswordInput name="password" placeholder="Password" />
-          <div className="flex justify-end">
-            <Link
-              href="/forgotpassword"
-              className="text-sm font-semibold text-link"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <Button className="mt-6 w-full">Sign In</Button>
-        </Form>
+        {({ isValid, isSubmitting }) => {
+          return (
+            <Form className="mt-7 w-full">
+              <FormInput
+                name="emailOrMobile"
+                type="text"
+                placeholder="Email or Mobile Number"
+              />
+              <PasswordInput name="password" placeholder="Password" />
+              <div className="flex justify-end">
+                <Link
+                  href="/forgotpassword"
+                  className="text-sm font-semibold text-link"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Button
+                disabled={isSubmitting || isValid}
+                className="mt-6 w-full"
+              >
+                Sign In
+              </Button>
+            </Form>
+          );
+        }}
       </Formik>
 
       {/* <Head>
