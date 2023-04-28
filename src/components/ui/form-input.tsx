@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 import { Field, FieldHookConfig, useField } from "formik";
 
@@ -18,13 +19,25 @@ const FormInput: React.FC<Props> = ({
 
   return (
     <div>
-      {label && (
-        <label htmlFor={field.name}>
-          {label} {required ? <span>*</span> : null}
-        </label>
+      <Field
+        className={cn(
+          "flex h-10 w-full rounded-md border-2 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+          touched && error
+            ? "border-danger text-danger placeholder:text-danger"
+            : "border-divider"
+        )}
+        type={type}
+        id={field.name}
+        {...field}
+        {...props}
+      />
+      {touched && error ? (
+        <small className="text-danger">
+          {"Please enter a valid email address"}
+        </small>
+      ) : (
+        <small>&nbsp;</small>
       )}
-      <Field type={type} id={field.name} {...field} {...props} />
-      {touched && error ? <small>{error}</small> : <small>&nbsp;</small>}
     </div>
   );
 };

@@ -22,6 +22,8 @@ module.exports = {
           500: "#A9871E",
         },
         brandgray: "#404555",
+        divider: "#DCDEE5",
+        danger: "#D92D20",
         link: "#2558E5",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
