@@ -29,15 +29,17 @@ const Register: NextPage = () => {
           <FormInput name="firstName" type="text" placeholder="First Name" />
           <FormInput name="lastName" type="text" placeholder="Last Name" />
           <FormInput name="email" type="email" placeholder="Email Address" />
-          <PasswordInput
-            name="password"
-            type="password"
-            placeholder="Password"
-          />
+          <PasswordInput name="password" placeholder="Password" />
           <p className="mt-6 text-xs">
             By clicking Sign Up you are indicating that you have read and
-            acknowledged the <Link className="text-link font-semibold" href="/404">Terms of Service</Link> and{" "}
-            <Link className="text-link font-semibold" href="/404">Privacy Notice</Link>
+            acknowledged the{" "}
+            <Link className="font-semibold text-link" href="/404">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link className="font-semibold text-link" href="/404">
+              Privacy Notice
+            </Link>
           </p>
 
           <Button className="mt-6 w-full">Sign Up</Button>

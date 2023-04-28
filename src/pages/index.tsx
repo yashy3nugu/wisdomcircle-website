@@ -55,11 +55,7 @@ const Home: NextPage = () => {
             type="email"
             placeholder="Email or Mobile Number"
           />
-          <PasswordInput
-            name="password"
-            type="password"
-            placeholder="Password"
-          />
+          <PasswordInput name="password" placeholder="Password" />
           <div className="flex justify-end">
             <Link
               href="/forgotpassword"
