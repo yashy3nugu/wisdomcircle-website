@@ -8,9 +8,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const FormInput: React.FC<Props> = ({
-  label,
   type = "text",
-  required = true,
   ...props
 }) => {
   const [field, { touched, error }] = useField<
