@@ -18,6 +18,9 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "@/server/db";
 
+//type CreateContextOptions = Record<string, never>;
+
+import { User as UserModel } from "@prisma/client";
 type CreateContextOptions = Record<string, never>;
 
 /**
@@ -43,7 +46,14 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+  const contextInner = createInnerTRPCContext({});
+
+  return {
+    ...contextInner,
+    req: _opts.req,
+    res: _opts.res,
+    user: null as UserModel | null,
+  };
 };
 
 /**
@@ -56,6 +66,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { User } from "lucide-react";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

@@ -1,6 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { loginInputSchema, registerInputSchema } from "@/utils/schemas/schema";
 import { TRPCError } from "@trpc/server";
+import * as jwt from "@/server/lib/jwt";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -42,9 +43,15 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      jwt.signToken({ user }, ctx.req, ctx.res);
+
       return user;
     }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();
+  }),
+
+  user: publicProcedure.query(({ ctx }) => {
+    return ctx.user || null;
   }),
 });
