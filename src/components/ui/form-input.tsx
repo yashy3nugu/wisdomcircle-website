@@ -21,7 +21,7 @@ const FormInput: React.FC<Props> = ({
     <div>
       <Field
         className={cn(
-          "flex h-12 md:text-base w-full rounded-md border-2 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-12 w-full rounded-md border-2 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-base",
           touched && error
             ? "border-danger text-danger placeholder:text-danger"
             : "border-divider"
