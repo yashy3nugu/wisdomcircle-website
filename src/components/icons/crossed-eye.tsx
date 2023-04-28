@@ -1,7 +1,7 @@
 import React from "react";
 
 interface CrossedEyeProps {
-  error?: string;
+  error?: boolean;
 }
 
 const CrossedEye: React.FC<CrossedEyeProps> = ({error}) => {

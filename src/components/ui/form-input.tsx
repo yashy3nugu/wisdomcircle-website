@@ -30,8 +30,8 @@ const FormInput: React.FC<Props> = ({
         {...props}
       />
       {touched && error ? (
-        <small className="text-danger">
-          {"Please enter a valid email address"}
+        <small className="text-danger mb-2 block">
+          {error}
         </small>
       ) : (
         <small>&nbsp;</small>

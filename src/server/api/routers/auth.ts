@@ -25,22 +25,24 @@ export const authRouter = createTRPCRouter({
   login: publicProcedure
     .input(loginInputSchema)
     .mutation(async ({ input, ctx }) => {
-      const { email, password } = input;
+      const { emailOrMobile, password } = input;
 
-      const user = await ctx.prisma.user.findUnique({
-        where: { email },
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          OR: [{ email: emailOrMobile }, { mobile: emailOrMobile }],
+        },
       });
 
       if (!user) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid Credentials",
+          code: "NOT_FOUND",
+          message: "Invalid email or mobile",
         });
       }
 
       if (user.password !== password) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
+          code: "UNAUTHORIZED",
           message: "Invalid Credentials",
         });
       }

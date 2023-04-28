@@ -1,7 +1,7 @@
 import React from "react";
 
 interface EyeProps {
-  error?: string;
+  error?: boolean;
 }
 
 const Eye: React.FC<EyeProps> = ({error}) => {

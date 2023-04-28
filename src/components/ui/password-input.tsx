@@ -46,13 +46,13 @@ const PasswordInput: React.FC<Props> = ({
           variant={"ghost"}
           onClick={() => setShowPassword((val) => !val)}
         >
-          {showPassword ? <CrossedEye error={error} /> : <Eye error={error} />}
+          {showPassword ? <CrossedEye error={touched && !!error} /> : <Eye error={touched && !!error} />}
         </Button>
       </div>
 
       {touched && error ? (
-        <small className="text-danger">
-          {"Please enter a valid email address"}
+        <small className="text-danger block mb-2">
+          {error}
         </small>
       ) : (
         <small>&nbsp;</small>

@@ -8,21 +8,29 @@ import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import PasswordInput from "@/components/ui/password-input";
 import Link from "next/link";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { loginInputSchema } from "@/utils/schemas/schema";
+import { useState } from "react";
+import { TRPCClientError } from "@trpc/client";
+import { getHTTPStatusCodeFromError } from "@trpc/server/http";
+import { TRPCError } from "@trpc/server";
 
 const Home: NextPage = () => {
   const context = api.useContext();
   const router = useRouter();
 
-  const { mutate, isLoading } = api.auth.login.useMutation({
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const { mutateAsync, isLoading , error} = api.auth.login.useMutation({
     onSuccess(data) {
       context.auth.user.setData(undefined, data);
     },
     // onError(error) {
-
+      
     // },
     async onSettled(data) {
       if (data) {
-        const redirect = (router.query.redirect as string) || "/app";
+        const redirect = (router.query.redirect as string) || "/home";
         await router.replace(redirect);
       }
     },
@@ -38,21 +46,56 @@ const Home: NextPage = () => {
         </Link>
       </p>
       <Formik
-        onSubmit={(values, actions) => {
-          const { email, password } = values;
-          mutate({
-            email,
+        validationSchema={toFormikValidationSchema(loginInputSchema)}
+        onSubmit={async (values, actions) => {
+          const { emailOrMobile, password } = values;
+
+
+
+          try {
+            await mutateAsync({
+            emailOrMobile,
             password,
           });
+          }
+          catch (err) {
 
-          actions.resetForm();
+            const error = err as any
+            console.log({...error})
+            if (error.data.code === "NOT_FOUND") {
+              if (emailOrMobile.includes('@')) {
+                  actions.setFieldError(
+                    "emailOrMobile",
+                    "Sorry! This email is not registered"
+                  );
+              }
+              else {
+                actions.setFieldError(
+                  "emailOrMobile",
+                  "Sorry! This mobile number is not registered"
+                );
+              }
+
+            }
+            else if (error.data.code === "UNAUTHORIZED") {
+              actions.setFieldError(
+                "password",
+                "Sorry! Password entered is incorrect"
+              );
+            }
+            
+            
+          }
+          
+          
+          // actions.resetForm();
         }}
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ emailOrMobile: "", password: "" }}
       >
         <Form className="mt-7 w-full">
           <FormInput
-            name="email"
-            type="email"
+            name="emailOrMobile"
+            type="text"
             placeholder="Email or Mobile Number"
           />
           <PasswordInput name="password" placeholder="Password" />
