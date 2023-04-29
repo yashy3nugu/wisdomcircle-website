@@ -18,27 +18,27 @@ interface PageProps {
 
 const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
   const { toast } = useToast();
-  const [redirect, setRedirect] = useState<boolean>(false);
+  // const [redirect, setRedirect] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const navigateToOtherPage = async () => {
-      await router.replace("/");
-    };
-    if (redirect) {
-      const timer = setTimeout(() => {
-        void navigateToOtherPage();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [redirect, router]);
+  // useEffect(() => {
+  //   const navigateToOtherPage = async () => {
+  //     await router.replace("/");
+  //   };
+  //   if (redirect) {
+  //     const timer = setTimeout(() => {
+  //       void navigateToOtherPage();
+  //     }, 5000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [redirect, router]);
 
   const { mutateAsync } = api.auth.resetPassword.useMutation({
-    onSuccess(data) {
+    async onSuccess(data) {
       toast({
         description: "Your password is reset successfully",
       });
-      setRedirect(true);
+      await router.replace("/");
     },
     onError(error) {
       toast({
@@ -133,7 +133,7 @@ export async function getServerSideProps(context: PageContext) {
   if (!tokenRecord || now > tokenRecord.expiresAt) {
     return {
       props: {
-        success: true,
+        success: false,
         token,
       },
     };
