@@ -49,7 +49,7 @@ export const resetPasswordFormSchema = z
       .min(8, "password must contain atleast 8 characters"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Sorry! Passwords is not matching",
     path: ["confirmPassword"],
   });
 

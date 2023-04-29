@@ -87,10 +87,16 @@ const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
         {({ isSubmitting, isValid, dirty }) => {
           return (
             <Form className="mt-7 w-full">
-              <PasswordInput name="password" placeholder="New Password" />
+              <PasswordInput
+                name="password"
+                placeholder="New Password"
+                helper="Password must be at least 8 characters"
+              />
+              <div className="my-4"></div>
               <PasswordInput
                 name="confirmPassword"
                 placeholder="Confirm New Password"
+                helper="Both passwords must match!"
               />
 
               <Button
@@ -127,7 +133,7 @@ export async function getServerSideProps(context: PageContext) {
   if (!tokenRecord || now > tokenRecord.expiresAt) {
     return {
       props: {
-        success: false,
+        success: true,
         token,
       },
     };

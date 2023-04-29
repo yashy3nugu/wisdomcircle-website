@@ -104,7 +104,11 @@ const Register: NextPage = () => {
                 type="text"
                 placeholder="Mobile Number"
               />
-              <PasswordInput name="password" placeholder="Password" />
+              <PasswordInput
+                name="password"
+                placeholder="Password"
+                helper="Password must be at least 8 characters"
+              />
               <p className="mt-6 text-xs">
                 By clicking Sign Up you are indicating that you have read and
                 acknowledged the{" "}

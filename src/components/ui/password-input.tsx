@@ -8,11 +8,10 @@ import CrossedEye from "../icons/crossed-eye";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
+  helper?: string;
 };
 
-const PasswordInput: React.FC<Props> = ({
-  ...props
-}) => {
+const PasswordInput: React.FC<Props> = ({ helper, ...props }) => {
   const [field, { touched, error }] = useField<
     FieldHookConfig<string | number>
   >(props.name!);
@@ -31,7 +30,7 @@ const PasswordInput: React.FC<Props> = ({
         <div className="flex w-full flex-col">
           <Field
             className={cn(
-              "box-border block h-12 appearance-none rounded bg-transparent px-3 pr-0 text-sm md:text-base placeholder:text-muted-foreground focus:outline-none",
+              "box-border block h-12 appearance-none rounded bg-transparent px-3 pr-0 text-sm placeholder:text-muted-foreground focus:outline-none md:text-base",
               touched && error ? "text-danger placeholder:text-danger" : ""
             )}
             type={showPassword ? "text" : "password"}
@@ -46,16 +45,20 @@ const PasswordInput: React.FC<Props> = ({
           variant={"ghost"}
           onClick={() => setShowPassword((val) => !val)}
         >
-          {showPassword ? <CrossedEye error={touched && !!error} /> : <Eye error={touched && !!error} />}
+          {showPassword ? (
+            <CrossedEye error={touched && !!error} />
+          ) : (
+            <Eye error={touched && !!error} />
+          )}
         </Button>
       </div>
 
       {touched && error ? (
-        <small className="text-danger block mb-2">
-          {error}
-        </small>
+        <small className="mb-2 mt-1 block text-danger">{error}</small>
       ) : (
-        <small>&nbsp;</small>
+        <small className="mb-2 mt-1 block text-brandgray">
+          {!!helper ? helper : "\u00A0"}
+        </small>
       )}
     </div>
   );
