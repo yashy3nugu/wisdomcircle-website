@@ -33,13 +33,13 @@ export const verifyTokenInpuSchema = z.object({
   token: z.string(),
 });
 
-export const sendPasswordRecoveryMailInpuSchema = z.object({
+export const sendPasswordRecoveryMailInputSchema = z.object({
   email: z
     .string({ required_error: "Please provide your email or phone number" })
     .email({ message: "Please provide a valid email address" }),
 });
 
-export const updatePasswordFormSchema = z
+export const resetPasswordFormSchema = z
   .object({
     password: z
       .string({ required_error: "Please provide a password" })
@@ -52,3 +52,10 @@ export const updatePasswordFormSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  password: z
+    .string({ required_error: "Please provide a password" })
+    .min(8, "password must contain atleast 8 characters"),
+});

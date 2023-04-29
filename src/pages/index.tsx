@@ -30,9 +30,6 @@ const Home: NextPage = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const { mutateAsync } = api.auth.login.useMutation({
     onSuccess(data) {
       context.auth.user.setData(undefined, data);

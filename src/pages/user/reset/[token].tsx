@@ -6,21 +6,37 @@ import PasswordInput from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { updatePasswordFormSchema } from "@/utils/schemas/schema";
+import { resetPasswordFormSchema } from "@/utils/schemas/schema";
 
 interface PageProps {
   success: boolean;
+  token: string;
 }
 
-const PasswordResetPage: NextPage<PageProps> = ({ success }) => {
+const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
+  const { mutateAsync } = api.auth.resetPassword.useMutation({
+    onSuccess(data) {
+      // context.auth.user.setData(undefined, data);
+    },
+    // onError(error) {
+
+    // },
+    onSettled(data) {
+      if (data) {
+      }
+    },
+  });
+
   if (!success) {
     return (
       <>
         <p className="text-lg font-bold lg:text-2xl">Invalid or expired link</p>
         <p className="mt-1 text-brandgray">
-          The password reset link is either invalid or expired. Please visit <Link href="/forgotpassword" className="font-semibold text-link">
+          The password reset link is either invalid or expired. Please visit{" "}
+          <Link href="/forgotpassword" className="font-semibold text-link">
             forgot password
-        </Link>.
+          </Link>
+          .
         </p>
       </>
     );
@@ -33,10 +49,14 @@ const PasswordResetPage: NextPage<PageProps> = ({ success }) => {
         Enter a new password you haven&apos;t used before
       </p>
       <Formik
-        onSubmit={(values, actions) => {
-          actions.resetForm();
+        onSubmit={async (values, actions) => {
+          const { password } = values;
+          await mutateAsync({
+            password,
+            token,
+          });
         }}
-        validationSchema={toFormikValidationSchema(updatePasswordFormSchema)}
+        validationSchema={toFormikValidationSchema(resetPasswordFormSchema)}
         initialValues={{ password: "", confirmPassword: "" }}
       >
         {({ isSubmitting, isValid }) => {
@@ -58,7 +78,6 @@ const PasswordResetPage: NextPage<PageProps> = ({ success }) => {
             </Form>
           );
         }}
-        
       </Formik>
     </>
   );
@@ -70,35 +89,28 @@ interface PageContext extends GetServerSidePropsContext {
   };
 }
 
-export function getServerSideProps(context: PageContext) {
-  //   const now = new Date();
-  //   const { token } = context.params;
+export async function getServerSideProps(context: PageContext) {
+  const now = new Date();
+  const { token } = context.params;
 
-  //   const tokenRecord = await prisma.token.findUnique({
-  //     where: { token },
-  //     select: { expiresAt: true, user: { select: { id: true } } },
-  //   });
+  const tokenRecord = await prisma.token.findUnique({
+    where: { token },
+    select: { expiresAt: true, user: { select: { id: true } } },
+  });
 
-  //   if (!tokenRecord || now > tokenRecord.expiresAt) {
-  //     return {
-  //       props: {
-  //         success: false,
-  //       },
-  //     };
-  //   }
-
-  // //   await prisma.user.update({
-  // //     where: { id: tokenRecord.user.id },
-  // //     data: { verified: true },
-  // //   });
-
-  //   await prisma.token.delete({
-  //     where: { token },
-  //   });
+  if (!tokenRecord || now > tokenRecord.expiresAt) {
+    return {
+      props: {
+        success: false,
+        token,
+      },
+    };
+  }
 
   return {
     props: {
       success: true,
+      token,
     },
   };
 }

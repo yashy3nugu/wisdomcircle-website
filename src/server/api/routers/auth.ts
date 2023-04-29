@@ -2,7 +2,8 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
   loginInputSchema,
   registerInputSchema,
-  sendPasswordRecoveryMailInpuSchema,
+  resetPasswordSchema,
+  sendPasswordRecoveryMailInputSchema,
 } from "@/utils/schemas/schema";
 import { TRPCError } from "@trpc/server";
 import * as jwt from "@/server/lib/jwt";
@@ -124,7 +125,7 @@ export const authRouter = createTRPCRouter({
     }),
 
   sendPasswordRecoveryMail: publicProcedure
-    .input(sendPasswordRecoveryMailInpuSchema)
+    .input(sendPasswordRecoveryMailInputSchema)
     .mutation(async ({ ctx, input }) => {
       const { email } = input;
 
@@ -170,21 +171,44 @@ export const authRouter = createTRPCRouter({
       //TODO: remove later
       console.log("Token: %s", token);
 
-      const info = await transporter.sendMail({
-        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
-        to: email, // list of receivers
-        subject: "Reset password of your WisdomCircle account", // Subject line
-        text: token, // plain text body
-        html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
-          .req.headers.host!}/user/reset/${token}">${ctx.req.headers
-          .host!}/users/reset </a></p>`, // html body
-      });
-      console.log("Message sent: %s", info.messageId);
-      console.log("Preview URL: %s", getTestMessageUrl(info));
+      // const info = await transporter.sendMail({
+      //   from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
+      //   to: email, // list of receivers
+      //   subject: "Reset password of your WisdomCircle account", // Subject line
+      //   text: token, // plain text body
+      //   html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
+      //     .req.headers.host!}/user/reset/${token}">${ctx.req.headers
+      //     .host!}/users/reset </a></p>`, // html body
+      // });
+      // console.log("Message sent: %s", info.messageId);
+      // console.log("Preview URL: %s", getTestMessageUrl(info));
 
       return { success: true };
     }),
 
+  resetPassword: publicProcedure
+    .input(resetPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { password, token } = input;
+
+      const tokenRecord = await ctx.prisma.token.findUnique({
+        where: { token: token },
+        select: { userId: true },
+      });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await ctx.prisma.user.update({
+        where: { id: tokenRecord?.userId },
+        data: { password: hashedPassword },
+      });
+
+      await ctx.prisma.token.delete({
+        where: { token },
+      });
+
+      return true;
+    }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();
   }),
