@@ -7,23 +7,20 @@ interface PageProps {
 }
 
 const EmailVerificationPage: NextPage<PageProps> = ({ success }) => {
-  console.log(success);
-    if (!success) {
-        return <p>invalid token</p>
-    }
-    
-    return <p>return to sign in</p>
+  if (!success) {
+    return <p>invalid token</p>;
+  }
+
+  return <p>return to sign in</p>;
 };
 
 interface PageContext extends GetServerSidePropsContext {
-    params: {
-        token: string
-    }
+  params: {
+    token: string;
+  };
 }
 
-
 export async function getServerSideProps(context: PageContext) {
-  console.log("server side props ran")
   const now = new Date();
   const { token } = context.params;
 
@@ -33,7 +30,6 @@ export async function getServerSideProps(context: PageContext) {
   });
 
   if (!tokenRecord || now > tokenRecord.expiresAt) {
-    console.log("falsei")
     return {
       props: {
         success: false,
@@ -53,7 +49,7 @@ export async function getServerSideProps(context: PageContext) {
   return {
     props: {
       success: true,
-    }, 
+    },
   };
 }
 export default EmailVerificationPage;
