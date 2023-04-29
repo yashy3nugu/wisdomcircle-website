@@ -5,6 +5,7 @@ import { Poppins } from "next/font/google";
 
 import "@/styles/globals.css";
 import Layout from "@/components/layouts/layout";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -20,6 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      <Toaster />
     </div>
   );
 };
