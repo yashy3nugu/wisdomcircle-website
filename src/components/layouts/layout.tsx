@@ -1,8 +1,19 @@
-import React from "react";
+import React, { use } from "react";
 import Company from "../icons/company";
 import Divider from "../icons/divider";
 import Turtle from "../icons/turtle";
+import { useRouter } from "next/router";
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const router = useRouter();
+
+  if (router.pathname.startsWith("/user/verify")) {
+    return (
+      <>
+        <main>{children}</main>
+      </>
+    );
+  }
+
   return (
     <>
       <main>

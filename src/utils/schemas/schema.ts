@@ -33,3 +33,7 @@ export const loginInputSchema = z.object({
     required_error: "Please provide your password",
   }),
 });
+
+export const verifyTokenInpuSchema = z.object({
+  token: z.string(),
+});

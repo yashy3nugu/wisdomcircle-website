@@ -12,6 +12,9 @@ const poppins = Poppins({
 });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+
+  
+
   return (
     <div className={`${poppins.className}`}>
       <Layout>

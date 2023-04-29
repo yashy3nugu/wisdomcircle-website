@@ -11,14 +11,14 @@ import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 
 const Register: NextPage = () => {
-  const context = api.useContext();
+  // const context = api.useContext();
   const router = useRouter();
 
   const { mutateAsync } = api.auth.register.useMutation({
   
     
   onSuccess(data) {
-    context.auth.user.setData(undefined, data);
+    // context.auth.user.setData(undefined, data);
   },
   // onError(error) {
 
@@ -64,7 +64,6 @@ const Register: NextPage = () => {
             }
           }
           
-          // actions.resetForm();
         }}
         validationSchema={toFormikValidationSchema(registerInputSchema)}
         initialValues={{
