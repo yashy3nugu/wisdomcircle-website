@@ -74,7 +74,7 @@ const Register: NextPage = () => {
           lastName: "",
         }}
       >
-        {({ isSubmitting, isValid }) => {
+        {({ isSubmitting, isValid, dirty }) => {
           return (
             <Form className="mt-7 w-full">
               <FormInput
@@ -107,7 +107,7 @@ const Register: NextPage = () => {
               </p>
 
               <Button
-                disabled={isSubmitting || !isValid}
+                disabled={isSubmitting || !isValid || !dirty}
                 className="mt-6 w-full"
               >
                 Sign Up

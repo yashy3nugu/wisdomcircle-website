@@ -116,7 +116,7 @@ const Home: NextPage = () => {
         }}
         initialValues={{ emailOrMobile: "", password: "" }}
       >
-        {({ isValid, isSubmitting }) => {
+        {({ isValid, isSubmitting, dirty }) => {
           return (
             <Form className="mt-7 w-full">
               <FormInput
@@ -134,7 +134,7 @@ const Home: NextPage = () => {
                 </Link>
               </div>
               <Button
-                disabled={isSubmitting || !isValid}
+                disabled={isSubmitting || !isValid || !dirty}
                 className="mt-6 w-full"
               >
                 Sign In

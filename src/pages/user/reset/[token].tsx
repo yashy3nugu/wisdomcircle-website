@@ -59,7 +59,7 @@ const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
         validationSchema={toFormikValidationSchema(resetPasswordFormSchema)}
         initialValues={{ password: "", confirmPassword: "" }}
       >
-        {({ isSubmitting, isValid }) => {
+        {({ isSubmitting, isValid, dirty }) => {
           return (
             <Form className="mt-7 w-full">
               <PasswordInput name="password" placeholder="New Password" />
@@ -69,7 +69,7 @@ const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
               />
 
               <Button
-                disabled={isSubmitting || !isValid}
+                disabled={isSubmitting || !isValid || !dirty}
                 type="submit"
                 className="mt-6 w-full"
               >
