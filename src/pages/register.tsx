@@ -9,30 +9,46 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerInputSchema } from "@/utils/schemas/schema";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 const Register: NextPage = () => {
   // const context = api.useContext();
   const router = useRouter();
-
+  const [open, setOpen] = useState<boolean>(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
   const { mutateAsync } = api.auth.register.useMutation({
-  
-    
-  onSuccess(data) {
-    // context.auth.user.setData(undefined, data);
-  },
-  // onError(error) {
+    onSuccess(data) {
+      setUnverifiedEmail(data.email);
+      setOpen(true);
 
-  // },
-  async onSettled(data) {
-    if (data) {
-      const redirect = (router.query.redirect as string) || "/home";
-      await router.replace(redirect);
-    }
-  },
-});
+      // context.auth.user.setData(undefined, data);
+    },
+    // onError(error) {
+
+    // },
+  });
 
   return (
     <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="">
+          <DialogHeader>
+            <DialogTitle>Verify Email</DialogTitle>
+          </DialogHeader>
+          <p>
+            Please verify your account. We have sent an email to{" "}
+            <span className="font-semibold">{unverifiedEmail}</span>. If you are
+            unable to find the verification email please contact us at:{" "}
+            <span className="font-semibold">+91-9380644532</span>{" "}
+          </p>
+        </DialogContent>
+      </Dialog>
       <p className="text-lg font-bold lg:text-2xl">Create an account</p>
       <p className="mt-1 text-brandgray">
         Already have an account?{" "}
@@ -43,27 +59,22 @@ const Register: NextPage = () => {
       <Formik
         onSubmit={async (values, actions) => {
           try {
-            await mutateAsync(
-            values
-          )
-          }
-          catch (err) {
+            await mutateAsync(values);
+          } catch (err) {
             const error = err as any;
             console.log({ ...error });
-            if(error.shape.message.includes('email')) {
+            if (error.shape.message.includes("email")) {
               actions.setFieldError(
-                  "email",
-                  "Sorry! This email is already in use"
-                );
-            }
-            else if(error.shape.message.includes('mobile')) {
+                "email",
+                "Sorry! This email is already in use"
+              );
+            } else if (error.shape.message.includes("mobile")) {
               actions.setFieldError(
                 "mobile",
                 "Sorry! This mobile number is already in use"
               );
             }
           }
-          
         }}
         validationSchema={toFormikValidationSchema(registerInputSchema)}
         initialValues={{
@@ -107,6 +118,7 @@ const Register: NextPage = () => {
               </p>
 
               <Button
+                loading={isSubmitting}
                 disabled={isSubmitting || !isValid || !dirty}
                 className="mt-6 w-full"
               >

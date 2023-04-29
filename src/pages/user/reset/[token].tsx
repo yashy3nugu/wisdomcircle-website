@@ -95,6 +95,7 @@ const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
 
               <Button
                 disabled={isSubmitting || !isValid || !dirty}
+                loading={isSubmitting}
                 type="submit"
                 className="mt-6 w-full"
               >

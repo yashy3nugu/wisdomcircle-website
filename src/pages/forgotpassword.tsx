@@ -87,6 +87,7 @@ const ForgotPassword: NextPage = () => {
               <Button
                 disabled={isSubmitting || !isValid || !dirty}
                 className="mt-6 w-full"
+                loading={isSubmitting}
               >
                 Email me a recovery link
               </Button>

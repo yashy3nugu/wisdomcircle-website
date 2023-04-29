@@ -135,6 +135,7 @@ const Home: NextPage = () => {
               </div>
               <Button
                 disabled={isSubmitting || !isValid || !dirty}
+                loading={isSubmitting}
                 className="mt-6 w-full"
               >
                 Sign In
