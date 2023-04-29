@@ -106,6 +106,14 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      if (!user.verified) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: `User has not verified email: ${user.email}`,
+          
+        });
+      }
+
       jwt.signToken({ user }, ctx.req, ctx.res);
 
       return user;

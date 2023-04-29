@@ -11,15 +11,27 @@ import Link from "next/link";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { loginInputSchema } from "@/utils/schemas/schema";
 import { useState } from "react";
-import { TRPCClientError } from "@trpc/client";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
-import { TRPCError } from "@trpc/server";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+// import { Dialog, Overlay, Portal, Content, Root } from "@radix-ui/react-dialog";
 
 const Home: NextPage = () => {
   const context = api.useContext();
   const router = useRouter();
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const { mutateAsync } = api.auth.login.useMutation({
     onSuccess(data) {
@@ -38,6 +50,22 @@ const Home: NextPage = () => {
 
   return (
     <>
+      {/* <button onClick={handleOpen}>Open Dialog</button> */}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="">
+          <DialogHeader>
+            <DialogTitle>Verify Email</DialogTitle>
+          </DialogHeader>
+          <p>
+            Please verify your account. We have sent an email to{" "}
+            <span className="font-semibold">{unverifiedEmail}</span>. If you are
+            unable to find the verification email please contact us at:{" "}
+            <span className="font-semibold">+91-9380644532</span>{" "}
+          </p>
+        </DialogContent>
+      </Dialog>
+
       <p className="text-lg font-bold lg:text-2xl">Sign in to WisdomCircle</p>
       <p className="mt-1 text-brandgray">
         Don&apos;t have an account?{" "}
@@ -57,7 +85,8 @@ const Home: NextPage = () => {
             });
           } catch (err) {
             const error = err as any;
-            
+            console.log({ ...error });
+
             if (error.data.code === "NOT_FOUND") {
               if (emailOrMobile.includes("@")) {
                 actions.setFieldError(
@@ -71,14 +100,22 @@ const Home: NextPage = () => {
                 );
               }
             } else if (error.data.code === "UNAUTHORIZED") {
-              actions.setFieldError(
-                "password",
-                "Sorry! Password entered is incorrect"
-              );
+              if (
+                error.shape.message.startsWith("User has not verified email")
+              ) {
+                const email = error.shape.message.match(
+                  /[^ ]+@[^ ]+/
+                ) as string;
+                setUnverifiedEmail(email);
+                setOpen(true);
+              } else {
+                actions.setFieldError(
+                  "password",
+                  "Sorry! Password entered is incorrect"
+                );
+              }
             }
           }
-
-          // actions.resetForm();
         }}
         initialValues={{ emailOrMobile: "", password: "" }}
       >
@@ -100,7 +137,7 @@ const Home: NextPage = () => {
                 </Link>
               </div>
               <Button
-                disabled={isSubmitting || isValid}
+                disabled={isSubmitting || !isValid}
                 className="mt-6 w-full"
               >
                 Sign In
