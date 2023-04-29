@@ -41,9 +41,6 @@ export const authRouter = createTRPCRouter({
       const token = uuidv4();
       const expirationDate = DateTime.now().plus({ minutes: 10 }).toJSDate();
 
-      console.log("Token created");
-      // console.log("expiration: %s", expirationDate.toDateString());
-
       await ctx.prisma.token.create({
         data: {
           token,
@@ -52,33 +49,28 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      console.log("User created");
-
       const testAccount = await createTestAccount();
 
-      console.log("Creating transport");
       const transporter = createTransport({
         host: "smtp.ethereal.email",
         port: 587,
-        secure: false, // true for 465, false for other ports
+        secure: false,
         auth: {
-          user: testAccount.user, // generated ethereal user
-          pass: testAccount.pass, // generated ethereal password
+          user: testAccount.user,
+          pass: testAccount.pass,
         },
       });
-
-      console.log("Sending message");
       //TODO: remove later
       console.log("Token: %s", token);
 
       const info = await transporter.sendMail({
-        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
-        to: email, // list of receivers
-        subject: "Welcome to WisdomCircle!", // Subject line
-        text: token, // plain text body
+        from: '"WisdomCircle" <onboarding@wisdomcircle.com>',
+        to: email,
+        subject: "Welcome to WisdomCircle!",
+        text: token,
         html: `<p>To activate your account please follow this link: <a target="_" href="${ctx
           .req.headers.host!}/user/verify/${token}">${ctx.req.headers
-          .host!}/verify/token </a></p>`, // html body
+          .host!}/verify/token </a></p>`,
       });
 
       console.log("Message sent: %s", info.messageId);
@@ -113,6 +105,42 @@ export const authRouter = createTRPCRouter({
       }
 
       if (!user.verified) {
+        const token = uuidv4();
+        const expirationDate = DateTime.now().plus({ minutes: 10 }).toJSDate();
+
+        await ctx.prisma.token.create({
+          data: {
+            token,
+            expiresAt: expirationDate,
+            userId: user.id,
+          },
+        });
+
+        const testAccount = await createTestAccount();
+
+        const transporter = createTransport({
+          host: "smtp.ethereal.email",
+          port: 587,
+          secure: false, 
+          auth: {
+            user: testAccount.user, 
+            pass: testAccount.pass, 
+          },
+        });
+
+        const info = await transporter.sendMail({
+          from: '"WisdomCircle" <onboarding@wisdomcircle.com>',
+          to: user.email,
+          subject: "Welcome to WisdomCircle!",
+          text: token,
+          html: `<p>To activate your account please follow this link: <a target="_" href="${ctx
+            .req.headers.host!}/user/verify/${token}">${ctx.req.headers
+            .host!}/verify/token </a></p>`,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        console.log("Preview URL: %s", getTestMessageUrl(info));
+
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: `User has not verified email: ${user.email}`,
@@ -143,9 +171,6 @@ export const authRouter = createTRPCRouter({
       const token = uuidv4();
       const expirationDate = DateTime.now().plus({ minutes: 10 }).toJSDate();
 
-      console.log("Token created");
-      // console.log("expiration: %s", expirationDate.toDateString());
-
       await ctx.prisma.token.create({
         data: {
           token,
@@ -156,26 +181,23 @@ export const authRouter = createTRPCRouter({
 
       const testAccount = await createTestAccount();
 
-      console.log("Creating transport");
       const transporter = createTransport({
         host: "smtp.ethereal.email",
         port: 587,
-        secure: false, // true for 465, false for other ports
+        secure: false, 
         auth: {
-          user: testAccount.user, // generated ethereal user
-          pass: testAccount.pass, // generated ethereal password
+          user: testAccount.user, 
+          pass: testAccount.pass, 
         },
       });
-
-      console.log("Sending message");
       //TODO: remove later
       console.log("Token: %s", token);
 
       const info = await transporter.sendMail({
-        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
-        to: email, // list of receivers
-        subject: "Reset password of your WisdomCircle account", // Subject line
-        text: token, // plain text body
+        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', 
+        to: email, 
+        subject: "Reset password of your WisdomCircle account", 
+        text: token, 
         html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
           .req.headers.host!}/user/reset/${token}">${ctx.req.headers
           .host!}/users/reset </a></p>`, // html body
