@@ -171,17 +171,17 @@ export const authRouter = createTRPCRouter({
       //TODO: remove later
       console.log("Token: %s", token);
 
-      // const info = await transporter.sendMail({
-      //   from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
-      //   to: email, // list of receivers
-      //   subject: "Reset password of your WisdomCircle account", // Subject line
-      //   text: token, // plain text body
-      //   html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
-      //     .req.headers.host!}/user/reset/${token}">${ctx.req.headers
-      //     .host!}/users/reset </a></p>`, // html body
-      // });
-      // console.log("Message sent: %s", info.messageId);
-      // console.log("Preview URL: %s", getTestMessageUrl(info));
+      const info = await transporter.sendMail({
+        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
+        to: email, // list of receivers
+        subject: "Reset password of your WisdomCircle account", // Subject line
+        text: token, // plain text body
+        html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
+          .req.headers.host!}/user/reset/${token}">${ctx.req.headers
+          .host!}/users/reset </a></p>`, // html body
+      });
+      console.log("Message sent: %s", info.messageId);
+      console.log("Preview URL: %s", getTestMessageUrl(info));
 
       return { success: true };
     }),

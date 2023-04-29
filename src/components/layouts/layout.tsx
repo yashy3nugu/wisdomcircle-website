@@ -4,16 +4,6 @@ import Divider from "../icons/divider";
 import Turtle from "../icons/turtle";
 import { useRouter } from "next/router";
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const router = useRouter();
-
-  if (router.pathname.startsWith("/user/verify")) {
-    return (
-      <>
-        <main>{children}</main>
-      </>
-    );
-  }
-
   return (
     <>
       <main>

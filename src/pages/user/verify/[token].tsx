@@ -1,6 +1,6 @@
 import { GetServerSidePropsContext, type NextPage } from "next";
-import { api } from "@/utils/api";
 import { prisma } from "@/server/db";
+import Link from "next/link";
 
 interface PageProps {
   success: boolean;
@@ -8,10 +8,32 @@ interface PageProps {
 
 const EmailVerificationPage: NextPage<PageProps> = ({ success }) => {
   if (!success) {
-    return <p>invalid token</p>;
+    return (
+      <>
+        <p className="text-lg font-bold lg:text-2xl">Invalid or expired link</p>
+        <p className="mt-1 text-brandgray">
+          The password reset link is either invalid or expired. Please visit{" "}
+          <Link href="/" className="font-semibold text-link">
+            sign in
+          </Link>
+          .
+        </p>
+      </>
+    );
   }
 
-  return <p>return to sign in</p>;
+  return (
+    <>
+      <p className="text-lg font-bold lg:text-2xl">Invalid or expired link</p>
+      <p className="mt-1 text-brandgray">
+        Email verification successful. Go back to {" "}
+        <Link href="/" className="font-semibold text-link">
+          sign in
+        </Link>
+        .
+      </p>
+    </>
+  );
 };
 
 interface PageContext extends GetServerSidePropsContext {
