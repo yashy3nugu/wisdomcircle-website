@@ -13,6 +13,7 @@ import {
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
+import bcrypt from "bcrypt"
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -22,14 +23,15 @@ export const authRouter = createTRPCRouter({
 
       const { email, firstName, lastName, mobile, password } = input;
       // create user
-      //const user = await ctx.prisma.user.findFirst({});
+      
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await ctx.prisma.user.create({
         data: {
           firstName,
           lastName,
           email,
-          password,
+          password: hashedPassword,
           mobile,
         },
       });
@@ -99,7 +101,8 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      if (user.password !== password) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Invalid Credentials",
