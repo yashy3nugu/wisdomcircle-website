@@ -45,7 +45,12 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
               </div>
             </div>
             <div className="col-span-1 flex h-full w-full flex-col md:col-span-3 md:flex-row md:justify-center">
-              <div className="flex h-full w-full flex-col items-start justify-center px-6 sm:px-8 md:max-w-md">
+              <div className="flex w-full my-8 justify-center md:hidden">
+                <div className="h-24 w-24 bg-brandgray rounded-full p-5">
+                  <Company />
+                </div>
+              </div>
+              <div className="flex h-full w-full flex-col md:justify-center px-6 sm:px-8 md:max-w-md">
                 {children}
               </div>
             </div>
