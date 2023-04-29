@@ -2,7 +2,7 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
   loginInputSchema,
   registerInputSchema,
-  verifyTokenInpuSchema,
+  sendPasswordRecoveryMailInpuSchema,
 } from "@/utils/schemas/schema";
 import { TRPCError } from "@trpc/server";
 import * as jwt from "@/server/lib/jwt";
@@ -13,7 +13,7 @@ import {
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -23,7 +23,7 @@ export const authRouter = createTRPCRouter({
 
       const { email, firstName, lastName, mobile, password } = input;
       // create user
-      
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await ctx.prisma.user.create({
@@ -75,7 +75,9 @@ export const authRouter = createTRPCRouter({
         to: email, // list of receivers
         subject: "Welcome to WisdomCircle!", // Subject line
         text: token, // plain text body
-        html: `<p>To activate your account please follow this link: <a target="_" href="${ctx.req.headers.host!}/user/verify/${token}">${ctx.req.headers.host!}/verify/token </a></p>`, // html body
+        html: `<p>To activate your account please follow this link: <a target="_" href="${ctx
+          .req.headers.host!}/user/verify/${token}">${ctx.req.headers
+          .host!}/verify/token </a></p>`, // html body
       });
 
       console.log("Message sent: %s", info.messageId);
@@ -113,7 +115,6 @@ export const authRouter = createTRPCRouter({
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: `User has not verified email: ${user.email}`,
-          
         });
       }
 
@@ -121,6 +122,69 @@ export const authRouter = createTRPCRouter({
 
       return user;
     }),
+
+  sendPasswordRecoveryMail: publicProcedure
+    .input(sendPasswordRecoveryMailInpuSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { email } = input;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invalid email",
+        });
+      }
+
+      const token = uuidv4();
+      const expirationDate = DateTime.now().plus({ minutes: 10 }).toJSDate();
+
+      console.log("Token created");
+      // console.log("expiration: %s", expirationDate.toDateString());
+
+      await ctx.prisma.token.create({
+        data: {
+          token,
+          expiresAt: expirationDate,
+          userId: user.id,
+        },
+      });
+
+      const testAccount = await createTestAccount();
+
+      console.log("Creating transport");
+      const transporter = createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: testAccount.user, // generated ethereal user
+          pass: testAccount.pass, // generated ethereal password
+        },
+      });
+
+      console.log("Sending message");
+      //TODO: remove later
+      console.log("Token: %s", token);
+
+      const info = await transporter.sendMail({
+        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', // sender address
+        to: email, // list of receivers
+        subject: "Reset password of your WisdomCircle account", // Subject line
+        text: token, // plain text body
+        html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
+          .req.headers.host!}/user/reset/${token}">${ctx.req.headers
+          .host!}/users/reset </a></p>`, // html body
+      });
+      console.log("Message sent: %s", info.messageId);
+      console.log("Preview URL: %s", getTestMessageUrl(info));
+
+      return { success: true };
+    }),
+
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();
   }),
