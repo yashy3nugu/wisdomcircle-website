@@ -19,7 +19,7 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // const { email } = input;
 
-      const { email, firstName, lastName, mobile, password } = input;
+      const { email, firstName, lastName, mobile, password, countryCode } = input;
       // create user
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,6 +31,7 @@ export const authRouter = createTRPCRouter({
           email,
           password: hashedPassword,
           mobile,
+          countryCode
         },
       });
 
