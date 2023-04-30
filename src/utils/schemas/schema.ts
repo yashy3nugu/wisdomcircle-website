@@ -13,6 +13,7 @@ export const registerInputSchema = z.object({
   mobile: z
     .string({ required_error: "Please provide your mobile number" })
     .refine(validator.isMobilePhone, "Please provide a valid mobile number"),
+  countryCode: z.string({required_error: "Please provide a country code"})
 });
 
 export const loginInputSchema = z.object({

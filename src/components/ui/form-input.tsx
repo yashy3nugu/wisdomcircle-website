@@ -7,10 +7,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
 };
 
-const FormInput: React.FC<Props> = ({
-  type = "text",
-  ...props
-}) => {
+const FormInput: React.FC<Props> = ({ type = "text", ...props }) => {
   const [field, { touched, error }] = useField<
     FieldHookConfig<string | number>
   >(props.name!);
@@ -30,11 +27,9 @@ const FormInput: React.FC<Props> = ({
         {...props}
       />
       {touched && error ? (
-        <small className="text-danger mb-2 block">
-          {error}
-        </small>
+        <small className="mb-2 block text-danger">{error}</small>
       ) : (
-        <small>&nbsp;</small>
+        <small className="mb-2 block">&nbsp;</small>
       )}
     </div>
   );

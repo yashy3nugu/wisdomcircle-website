@@ -16,6 +16,7 @@ model User {
   lastName  String
   email     String @unique
   mobile    String @unique
+  countryCode  String
   password  String
   verified  Boolean  @default(false)
   tokens   Token[]

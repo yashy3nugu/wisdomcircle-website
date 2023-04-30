@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import FormInput from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/ui/password-input";
@@ -7,6 +7,18 @@ import Link from "next/link";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerInputSchema } from "@/utils/schemas/schema";
 import { api } from "@/utils/api";
+import { Country } from "@/data/countries";
+import CountryData from "@/data/countries.json";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Dialog,
@@ -15,8 +27,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import MobileInput from "@/components/ui/mobile-input";
 
 const Register: NextPage = () => {
+  const countries: Country[] = CountryData;
   const [open, setOpen] = useState<boolean>(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
   const { mutateAsync } = api.auth.register.useMutation({
@@ -46,6 +60,7 @@ const Register: NextPage = () => {
           </p>
         </DialogContent>
       </Dialog>
+
       <p className="text-lg font-bold lg:text-2xl">Create an account</p>
       <p className="mt-1 text-brandgray">
         Already have an account?{" "}
@@ -80,9 +95,10 @@ const Register: NextPage = () => {
           mobile: "",
           firstName: "",
           lastName: "",
+          countryCode: "+91",
         }}
       >
-        {({ isSubmitting, isValid, dirty }) => {
+        {({ isSubmitting, isValid, dirty, values, handleChange }) => {
           return (
             <Form className="mt-7 w-full">
               <FormInput
@@ -96,11 +112,33 @@ const Register: NextPage = () => {
                 type="email"
                 placeholder="Email Address"
               />
-              <FormInput
-                name="mobile"
-                type="text"
+              {/* <pre>{JSON.stringify(values, null, 4)}</pre> */}
+              <MobileInput
                 placeholder="Mobile Number"
+                countryName="countryCode"
+                numberName="mobile"
               />
+              {/* <div className="flex gap-3">
+                <Field
+                  className="flex h-12 w-20 rounded-md border-2 bg-transparent  py-2 text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-base"
+                  name="countryCode"
+                  component="select"
+                >
+                  {countries.map(({ code, dial_code }, idx) => (
+                    <option className="" value={dial_code} key={idx}>
+                      {`${dial_code}`}
+                    </option>
+                  ))}
+                </Field>
+
+                <FormInput
+                  name="mobile"
+                  type="text"
+                  placeholder="Mobile Number"
+                  className="w-full"
+                />
+              </div> */}
+
               <PasswordInput
                 name="password"
                 placeholder="Password"
