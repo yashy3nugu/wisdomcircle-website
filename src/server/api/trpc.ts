@@ -66,6 +66,8 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { Cookie } from "next-cookie";
+import { decodeToken } from "../lib/jwt";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -79,6 +81,28 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       },
     };
   },
+});
+
+export const parseCookie = t.middleware(async ({ ctx, next }) => {
+  const cookie = Cookie.fromApiRoute(ctx.req, ctx.res);
+  const token = cookie.get<string>("wisdomcircle");
+
+  if (!token) return next();
+
+  const payload = decodeToken(token) as { id: string };
+
+  if (!payload) {
+    cookie.remove("burgerHouse");
+    return next();
+  }
+
+  const user = await ctx.prisma.user.findUnique({where: {id: Number(payload.id)}});
+
+  if (!user) return next();
+
+  ctx.user = user;
+
+  return next({ ctx });
 });
 
 /**
@@ -102,4 +126,4 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(parseCookie);

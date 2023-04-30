@@ -67,8 +67,7 @@ const Home: NextPage = () => {
     // },
     async onSettled(data) {
       if (data) {
-        const redirect = (router.query.redirect as string) || "/home";
-        await router.replace(redirect);
+        await router.replace("/home");
       }
     },
   });
