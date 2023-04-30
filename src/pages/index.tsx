@@ -36,7 +36,7 @@ const schema = yup.object().shape({
           );
         } else {
           return (
-            validator.isMobilePhone(value, "any", { strictMode: true }) ||
+            validator.isMobilePhone(value) ||
             this.createError({
               message: "Please provide a valid mobile number",
               path: "emailOrMobile",
