@@ -1,5 +1,4 @@
 import { type NextPage } from "next";
-import Head from "next/head";
 import { Form, Formik } from "formik";
 import FormInput from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import Link from "next/link";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerInputSchema } from "@/utils/schemas/schema";
 import { api } from "@/utils/api";
-import { useRouter } from "next/router";
+
 import {
   Dialog,
   DialogContent,
@@ -18,8 +17,6 @@ import {
 import { useState } from "react";
 
 const Register: NextPage = () => {
-  // const context = api.useContext();
-  const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string>("");
   const { mutateAsync } = api.auth.register.useMutation({

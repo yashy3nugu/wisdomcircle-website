@@ -9,11 +9,8 @@ import { TRPCError } from "@trpc/server";
 import * as jwt from "@/server/lib/jwt";
 import { v4 as uuidv4 } from "uuid";
 import { DateTime } from "luxon";
-import {
-  createTestAccount,
-  createTransport,
-  getTestMessageUrl,
-} from "nodemailer";
+import { transporter } from "@/utils/config/nodemailer";
+import absoluteUrl from "next-absolute-url";
 import bcrypt from "bcrypt";
 
 export const authRouter = createTRPCRouter({
@@ -49,32 +46,24 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      const testAccount = await createTestAccount();
-
-      const transporter = createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-      //TODO: remove later
-      console.log("Token: %s", token);
+      const { origin } = absoluteUrl(ctx.req);
 
       const info = await transporter.sendMail({
         from: '"WisdomCircle" <onboarding@wisdomcircle.com>',
         to: email,
         subject: "Welcome to WisdomCircle!",
         text: token,
-        html: `<p>To activate your account please follow this link: <a target="_" href="${ctx
-          .req.headers.host!}/user/verify/${token}">${ctx.req.headers
-          .host!}/verify/token </a></p>`,
+        html: `
+        <h1>Email Verification</h1>
+        <p>Dear User,</p>
+        <p>To activate your account please follow this link: <a target="_" href="${origin}/user/verify/${token}">${origin}/verify/token/${token} </a></p>
+        <p>If you didn't request this verification, please ignore this message.</p>
+        <p>Thank you,</p>
+        <p>WisdomCircle Team Team</p>
+        `,
       });
 
       console.log("Message sent: %s", info.messageId);
-      console.log("Preview URL: %s", getTestMessageUrl(info));
 
       return user;
     }),
@@ -116,30 +105,23 @@ export const authRouter = createTRPCRouter({
           },
         });
 
-        const testAccount = await createTestAccount();
-
-        const transporter = createTransport({
-          host: "smtp.ethereal.email",
-          port: 587,
-          secure: false, 
-          auth: {
-            user: testAccount.user, 
-            pass: testAccount.pass, 
-          },
-        });
+        const { origin } = absoluteUrl(ctx.req);
 
         const info = await transporter.sendMail({
           from: '"WisdomCircle" <onboarding@wisdomcircle.com>',
           to: user.email,
           subject: "Welcome to WisdomCircle!",
           text: token,
-          html: `<p>To activate your account please follow this link: <a target="_" href="${ctx
-            .req.headers.host!}/user/verify/${token}">${ctx.req.headers
-            .host!}/verify/token </a></p>`,
+          html: `
+            <h1>Email Verification</h1>
+            <p>Dear User,</p>
+            <p>To activate your account please follow this link: <a target="_" href="${origin}/user/verify/${token}">${origin}/verify/token/${token} </a></p>
+            <p>If you didn't request this verification, please ignore this message.</p>
+            <p>Thank you,</p>
+            <p>WisdomCircle Team Team</p>`,
         });
 
         console.log("Message sent: %s", info.messageId);
-        console.log("Preview URL: %s", getTestMessageUrl(info));
 
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -179,31 +161,16 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      const testAccount = await createTestAccount();
-
-      const transporter = createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, 
-        auth: {
-          user: testAccount.user, 
-          pass: testAccount.pass, 
-        },
-      });
-      //TODO: remove later
-      console.log("Token: %s", token);
-
       const info = await transporter.sendMail({
-        from: '"WisdomCircle" <onboarding@wisdomcircle.com>', 
-        to: email, 
-        subject: "Reset password of your WisdomCircle account", 
-        text: token, 
+        from: '"WisdomCircle" <onboarding@wisdomcircle.com>',
+        to: email,
+        subject: "Reset password of your WisdomCircle account",
+        text: token,
         html: `<p>To reset your password please follow this link: <a target="_" href="${ctx
           .req.headers.host!}/user/reset/${token}">${ctx.req.headers
           .host!}/users/reset </a></p>`, // html body
       });
       console.log("Message sent: %s", info.messageId);
-      console.log("Preview URL: %s", getTestMessageUrl(info));
 
       return { success: true };
     }),

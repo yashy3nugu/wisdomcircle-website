@@ -23,7 +23,7 @@ export const loginInputSchema = z.object({
     z
       .string({ required_error: "Please provide your email or phone number" })
       .refine(validator.isMobilePhone, "Please provide a valid mobile number"),
-  ]),
+  ]).refine(() => null, "aa"),
   password: z.string({
     required_error: "Please provide your password",
   }),

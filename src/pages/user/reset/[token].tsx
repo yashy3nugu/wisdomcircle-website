@@ -9,7 +9,6 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { resetPasswordFormSchema } from "@/utils/schemas/schema";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 interface PageProps {
   success: boolean;
@@ -18,29 +17,16 @@ interface PageProps {
 
 const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
   const { toast } = useToast();
-  // const [redirect, setRedirect] = useState<boolean>(false);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const navigateToOtherPage = async () => {
-  //     await router.replace("/");
-  //   };
-  //   if (redirect) {
-  //     const timer = setTimeout(() => {
-  //       void navigateToOtherPage();
-  //     }, 5000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [redirect, router]);
-
   const { mutateAsync } = api.auth.resetPassword.useMutation({
-    async onSuccess(data) {
+    async onSuccess() {
       toast({
         description: "Your password is reset successfully",
       });
       await router.replace("/");
     },
-    onError(error) {
+    onError() {
       toast({
         description: "Error. Please try again",
         variant: "destructive",
@@ -74,7 +60,7 @@ const PasswordResetPage: NextPage<PageProps> = ({ success, token }) => {
         Enter a new password you haven&apos;t used before
       </p>
       <Formik
-        onSubmit={async (values, actions) => {
+        onSubmit={async (values) => {
           const { password } = values;
           await mutateAsync({
             password,

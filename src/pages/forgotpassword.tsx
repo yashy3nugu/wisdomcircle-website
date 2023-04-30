@@ -9,11 +9,8 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { useState } from "react";
 
@@ -23,15 +20,8 @@ const ForgotPassword: NextPage = () => {
   const [open, setOpen] = useState<boolean>(false);
 
   const { mutateAsync } = api.auth.sendPasswordRecoveryMail.useMutation({
-    onSuccess(data) {
+    onSuccess() {
       setOpen(true);
-    },
-    // onError(error) {
-
-    // },
-    onSettled(data) {
-      if (data) {
-      }
     },
   });
   return (
@@ -41,7 +31,10 @@ const ForgotPassword: NextPage = () => {
           <DialogHeader>
             <DialogTitle>Reset Password</DialogTitle>
           </DialogHeader>
-          <p>Thank you! We have sent you a link to reset your password. Please check your email.</p>
+          <p>
+            Thank you! We have sent you a link to reset your password. Please
+            check your email.
+          </p>
         </DialogContent>
       </Dialog>
 
@@ -58,7 +51,7 @@ const ForgotPassword: NextPage = () => {
             await mutateAsync({
               email,
             });
-            actions.resetForm()
+            actions.resetForm();
           } catch (err) {
             const error = err as any;
 

@@ -1,5 +1,4 @@
 import { type NextPage } from "next";
-import Head from "next/head";
 import { Form, Formik } from "formik";
 import FormInput from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
@@ -8,18 +7,47 @@ import { useRouter } from "next/router";
 import { api } from "@/utils/api";
 import PasswordInput from "@/components/ui/password-input";
 import Link from "next/link";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import { loginInputSchema } from "@/utils/schemas/schema";
 import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
+import * as yup from "yup";
+import validator from "validator";
+
+const schema = yup.object().shape({
+  emailOrMobile: yup
+    .string()
+    .required("Please provide your email or phone number")
+    .test(
+      "emailOrMobile",
+      "Please provide a valid email address or mobile number",
+      function (value) {
+        if (!value) return true;
+        if (value.includes("@") || value.includes(".")) {
+          return (
+            validator.isEmail(value) ||
+            this.createError({
+              message: "Please provide a valid email address",
+              path: "emailOrMobile",
+            })
+          );
+        } else {
+          return (
+            validator.isMobilePhone(value, "any", { strictMode: true }) ||
+            this.createError({
+              message: "Please provide a valid mobile number",
+              path: "emailOrMobile",
+            })
+          );
+        }
+      }
+    ),
+
+  password: yup.string().required("Please provide your password"),
+});
 
 // import { Dialog, Overlay, Portal, Content, Root } from "@radix-ui/react-dialog";
 
@@ -71,7 +99,7 @@ const Home: NextPage = () => {
         </Link>
       </p>
       <Formik
-        validationSchema={toFormikValidationSchema(loginInputSchema)}
+        validationSchema={schema}
         onSubmit={async (values, actions) => {
           const { emailOrMobile, password } = values;
 

@@ -1,8 +1,7 @@
-import React, { use } from "react";
+import React from "react";
 import Company from "../icons/company";
 import Divider from "../icons/divider";
 import Turtle from "../icons/turtle";
-import { useRouter } from "next/router";
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
     <>
