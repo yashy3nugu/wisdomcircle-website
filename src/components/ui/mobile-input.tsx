@@ -14,7 +14,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
 const MobileInput: React.FC<Props> = ({ type = "text", ...props }) => {
   const [numberField, { touched: numberTouched, error: numberError }] =
     useField<FieldHookConfig<string | number>>(props.numberName);
-  const [countryField, { touched: countryTouched, error: countryError }] =
+  const [countryField] =
     useField<FieldHookConfig<string | number>>(props.countryName);
 
   const countries: Country[] = CountryData;
