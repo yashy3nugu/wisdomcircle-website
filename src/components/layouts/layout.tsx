@@ -5,7 +5,7 @@ import Turtle from "../icons/turtle";
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
     <>
-      <main>
+      <div>
         <div className="flex h-full flex-col items-center justify-center">
           <div className="grid h-screen w-full md:grid-cols-5">
             <div className="hidden justify-center md:col-span-2 md:flex">
@@ -55,7 +55,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 };
