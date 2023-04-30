@@ -12,6 +12,7 @@ import { DateTime } from "luxon";
 import { transporter } from "@/utils/config/nodemailer";
 import absoluteUrl from "next-absolute-url";
 import bcrypt from "bcrypt";
+import { Cookie } from "next-cookie";
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -19,11 +20,12 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // const { email } = input;
 
-      const { email, firstName, lastName, mobile, password, countryCode } = input;
+      const { email, firstName, lastName, mobile, password, countryCode } =
+        input;
 
       const userByEmail = await ctx.prisma.user.findFirst({
         where: {
-          email
+          email,
         },
       });
 
@@ -58,7 +60,7 @@ export const authRouter = createTRPCRouter({
           email,
           password: hashedPassword,
           mobile,
-          countryCode
+          countryCode,
         },
       });
 
@@ -232,5 +234,10 @@ export const authRouter = createTRPCRouter({
 
   user: publicProcedure.query(({ ctx }) => {
     return ctx.user || null;
+  }),
+  logout: publicProcedure.mutation(({ ctx }) => {
+    const cookie = Cookie.fromApiRoute(ctx.req, ctx.res);
+    cookie.remove("wisdomcircle");
+    return true;
   }),
 });
