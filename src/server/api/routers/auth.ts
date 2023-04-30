@@ -20,6 +20,33 @@ export const authRouter = createTRPCRouter({
       // const { email } = input;
 
       const { email, firstName, lastName, mobile, password, countryCode } = input;
+
+      const userByEmail = await ctx.prisma.user.findFirst({
+        where: {
+          email
+        },
+      });
+
+      if (userByEmail) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Sorry! This email is already in use",
+        });
+      }
+
+      const userByMobile = await ctx.prisma.user.findFirst({
+        where: {
+          mobile,
+        },
+      });
+
+      if (userByMobile) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Sorry! This mobile number is already in use",
+        });
+      }
+
       // create user
 
       const hashedPassword = await bcrypt.hash(password, 10);

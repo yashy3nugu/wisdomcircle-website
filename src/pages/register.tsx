@@ -62,16 +62,18 @@ const Register: NextPage = () => {
           } catch (err) {
             const error = err as any;
             console.log({ ...error });
-            if (error.shape.message.includes("email")) {
-              actions.setFieldError(
-                "email",
-                "Sorry! This email is already in use"
-              );
-            } else if (error.shape.message.includes("mobile")) {
-              actions.setFieldError(
-                "mobile",
-                "Sorry! This mobile number is already in use"
-              );
+            if (error.data.code === "BAD_REQUEST") {
+              if (error.shape.message.includes("email")) {
+                actions.setFieldError(
+                  "email",
+                  "Sorry! This email is already in use"
+                );
+              } else if (error.shape.message.includes("mobile")) {
+                actions.setFieldError(
+                  "mobile",
+                  "Sorry! This mobile number is already in use"
+                );
+              }
             }
           }
         }}
