@@ -27,7 +27,6 @@ const ForgotPassword: NextPage = () => {
   return (
     <>
       <p className="text-lg font-bold lg:text-2xl">Welcome to WisdomCircle</p>
-      <pre>{JSON.stringify(data, null, 4)}</pre>
       <Button
         type="button"
         onClick={() => {
