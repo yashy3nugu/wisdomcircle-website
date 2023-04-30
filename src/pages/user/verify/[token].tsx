@@ -24,7 +24,7 @@ const EmailVerificationPage: NextPage<PageProps> = ({ success }) => {
 
   return (
     <>
-      <p className="text-lg font-bold lg:text-2xl">Invalid or expired link</p>
+      <p className="text-lg font-bold lg:text-2xl">Email verification successful</p>
       <p className="mt-1 text-brandgray">
         Email verification successful. Go back to {" "}
         <Link href="/" className="font-semibold text-link">
